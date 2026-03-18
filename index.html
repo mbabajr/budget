@@ -210,69 +210,168 @@ input::placeholder{color:var(--text3)}
 .toast{position:fixed;bottom:2.5rem;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(28,28,30,.9);backdrop-filter:blur(12px);border-radius:12px;padding:12px 22px;font-size:14px;font-weight:600;color:#fff;opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* RESPONSIVE MOBILE */
-@media(max-width:680px){
-  .metrics{grid-template-columns:1fr 1fr}
-  .form-grid{grid-template-columns:1fr 1fr}.form-grid>.btn-blue{grid-column:span 2}
-  .dash-grid{grid-template-columns:1fr}.dash-wide{grid-column:span 1}
-  .modal-row-2{grid-template-columns:1fr}
-  /* Cache la nav top sur mobile, on utilise la nav bas */
-  .nav{display:none}
-  .app{padding:1.25rem 1rem 6rem}
-  .header{margin-bottom:1.5rem}
-  .logo{font-size:1.5rem}
-  .header-actions .btn{font-size:12px;padding:7px 10px}
-  .metrics{gap:8px;margin-bottom:1.25rem}
-  .metric{padding:14px 14px}
-  .metric-val{font-size:22px}
-  .month-pill{font-size:1.1rem;min-width:160px}
-  .card{padding:1.1rem}
-  .modal{padding:1.5rem;border-radius:var(--rl)}
-  .modal-lg{max-width:100%;margin:0;border-radius:var(--rl) var(--rl) 0 0;align-self:flex-end;max-height:92vh}
-  .overlay{align-items:flex-end}
-  .goals-grid{grid-template-columns:1fr}
-  .year-table{font-size:11px}
-  .year-table th,.year-table td{padding:8px 8px}
-  .rec-item{grid-template-columns:4px 1fr auto}
-  .tx-item{padding:11px 12px;gap:10px}
+/* ── BOTTOM NAV (desktop: caché) ── */
+.bottom-nav{display:none}
+
+/* ── DESKTOP ── */
+@media(min-width:681px){
+  .app{padding-top:max(2.5rem,env(safe-area-inset-top))}
 }
 
-/* BOTTOM NAV BAR — mobile seulement */
-.bottom-nav{display:none}
+/* ══════════════════════════════
+   MOBILE — iPhone first
+══════════════════════════════ */
 @media(max-width:680px){
+
+  /* Layout de base */
+  html{font-size:15px}
+  .app{
+    padding:0 0 calc(80px + env(safe-area-inset-bottom)) 0;
+    max-width:100%;
+  }
+
+  /* Header compact */
+  .header{
+    padding:max(14px,env(safe-area-inset-top)) 16px 12px;
+    margin-bottom:0;
+    background:rgba(242,242,247,.94);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    position:sticky;top:0;z-index:50;
+    border-bottom:0.5px solid var(--border);
+  }
+  .logo{font-size:1.3rem}
+  .header-actions{gap:6px}
+  .header-actions .btn{font-size:11px;padding:6px 9px;border-radius:8px}
+  #sync-indicator{display:none}
+
+  /* Nav top → cachée, remplacée par nav bas */
+  .nav{display:none}
+
+  /* Sections avec padding latéral */
+  .view{padding:16px 16px 0}
+
+  /* Metrics : 2 colonnes serrées */
+  .metrics{
+    grid-template-columns:1fr 1fr;
+    gap:8px;margin-bottom:14px;
+  }
+  .metric{padding:12px 13px;border-radius:12px}
+  .metric-lbl{font-size:10px;margin-bottom:6px}
+  .metric-val{font-size:20px}
+  .metric-sub{font-size:10px;margin-top:4px}
+
+  /* Cards */
+  .card{padding:14px;border-radius:14px;margin-bottom:10px}
+  .card-title{font-size:10px;margin-bottom:10px}
+
+  /* Dashboard — plus de tableau, tout en colonne */
+  .dash-grid{grid-template-columns:1fr;gap:10px;margin-bottom:10px}
+  .dash-wide{grid-column:span 1}
+  .year-nav{margin-bottom:14px;gap:8px}
+  .year-pill{font-size:1.1rem;min-width:60px}
+  .mnav-btn{width:34px;height:34px;font-size:14px}
+
+  /* Cacher le tableau sur mobile — remplacé par cards mois */
+  .year-table-card{display:none}
+  .mobile-month-cards{display:flex;flex-direction:column;gap:8px}
+
+  /* Graphiques moins hauts */
+  #annualBarChart{max-height:180px}
+  #balanceChart{max-height:160px}
+
+  /* Month nav Saisie */
+  .month-nav{margin-bottom:14px;gap:8px}
+  .month-pill{font-size:1.05rem;min-width:140px}
+
+  /* Formulaire saisie — tout en colonne */
+  .form-grid{
+    display:flex;flex-direction:column;gap:10px;
+    margin-top:12px;
+  }
+  .form-grid .btn-blue{width:100%;padding:14px;font-size:15px;border-radius:12px;margin-top:2px}
+  .type-sel{gap:6px;margin-bottom:12px}
+  .type-btn{padding:11px 6px;font-size:12px;border-radius:10px}
+
+  /* Transactions list */
+  .tx-list{gap:6px;margin-top:10px}
+  .tx-item{
+    padding:12px 13px;gap:11px;border-radius:12px;
+    grid-template-columns:4px 1fr auto auto;
+  }
+  .tx-name{font-size:13px}
+  .tx-meta{font-size:11px}
+  .tx-amt{font-size:14px}
+
+  /* Récurrentes — items compacts */
+  .rec-item{
+    grid-template-columns:4px 1fr auto;
+    gap:10px;padding:11px 12px;border-radius:12px;
+  }
+  .rec-item > div:nth-child(4),
+  .rec-item > div:nth-child(5){display:none}
+  .rec-name{font-size:13px}
+  .rec-meta{font-size:10px}
+  .rec-amt{font-size:13px}
+
+  /* Objectifs */
+  .goals-grid{grid-template-columns:1fr}
+  .savings-banner{padding:16px;border-radius:14px;margin-bottom:14px}
+  .sb-amount{font-size:26px}
+  .sb-rate-val{font-size:22px}
+  .goal-card{border-radius:14px;padding:14px}
+  .goal-name{font-size:15px}
+  .goal-current{font-size:22px}
+
+  /* Modals — slide up depuis le bas */
+  .overlay{align-items:flex-end;padding:0}
+  .modal{
+    width:100%;max-width:100%;
+    border-radius:20px 20px 0 0;
+    padding:20px 16px max(20px,env(safe-area-inset-bottom));
+    max-height:92vh;overflow-y:auto;
+  }
+  .modal-lg{max-height:96vh}
+  .modal-title{font-size:1.15rem;margin-bottom:1.1rem}
+  .modal-row-2{grid-template-columns:1fr}
+  .modal-actions{flex-direction:column-reverse;gap:8px}
+  .modal-actions .btn{width:100%;justify-content:center;padding:13px}
+
+  /* SH titles */
+  .sh{margin-bottom:10px}
+  .sh-title{font-size:16px}
+
+  /* Bottom nav */
   .bottom-nav{
     display:flex;
     position:fixed;bottom:0;left:0;right:0;
-    background:rgba(255,255,255,0.92);
+    background:rgba(255,255,255,0.95);
     backdrop-filter:blur(20px);
     -webkit-backdrop-filter:blur(20px);
-    border-top:0.5px solid rgba(0,0,0,0.15);
-    padding:8px 0 max(8px,env(safe-area-inset-bottom));
-    z-index:100;
+    border-top:0.5px solid rgba(0,0,0,0.12);
+    padding:6px 8px max(12px,env(safe-area-inset-bottom));
+    z-index:200;
+    gap:4px;
   }
   .bnav-btn{
-    flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
     background:none;border:none;cursor:pointer;
     font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;
     color:var(--text3);padding:4px 0;transition:color .15s;
-    letter-spacing:.02em;text-transform:uppercase;
+    -webkit-tap-highlight-color:transparent;
   }
   .bnav-btn.active{color:var(--blue)}
-  .bnav-icon{font-size:22px;line-height:1;margin-bottom:1px}
-  /* bouton central Saisie mis en avant */
+  .bnav-icon{font-size:20px;line-height:1.2}
   .bnav-btn.center .bnav-icon{
-    width:52px;height:52px;background:var(--blue);border-radius:50%;
+    width:48px;height:48px;
+    background:var(--blue);border-radius:50%;
     display:flex;align-items:center;justify-content:center;
-    color:#fff;font-size:22px;margin-top:-18px;
-    box-shadow:0 4px 14px rgba(0,122,255,.4);
+    color:#fff;font-size:20px;font-weight:800;
+    margin-top:-16px;
+    box-shadow:0 4px 14px rgba(0,122,255,.45);
   }
-  .bnav-btn.center.active .bnav-icon{background:var(--blue);filter:brightness(1.1)}
-}
-
-/* Safe area pour iPhone notch */
-.app{padding-top:max(2.5rem, env(safe-area-inset-top))}
-@media(max-width:680px){
-  .app{padding-top:max(1.25rem, env(safe-area-inset-top))}
+  .bnav-btn.center{color:var(--blue)}
+  .bnav-btn.center.active .bnav-icon{filter:brightness(1.1)}
 }
 </style>
 </head>
@@ -341,13 +440,16 @@ input::placeholder{color:var(--text3)}
       <div id="dash-rec-list"></div>
     </div>
 
-    <div class="card">
+    <!-- Tableau desktop -->
+    <div class="card year-table-card">
       <div class="card-title">Récap mensuel <span id="dash-year-lbl3"></span></div>
       <table class="year-table">
         <thead><tr><th>Mois</th><th>Revenus</th><th>Dépenses</th><th>Épargne</th><th>Solde libre</th><th>Taux</th></tr></thead>
         <tbody id="year-tbody"></tbody>
       </table>
     </div>
+    <!-- Cards mois mobile -->
+    <div class="mobile-month-cards" id="mobile-month-cards"></div>
   </div>
 
   <!-- ══ SAISIE ══ -->
@@ -375,10 +477,17 @@ input::placeholder{color:var(--text3)}
       </div>
     </div>
 
-    <div id="saisie-rec-section" style="display:none;margin-bottom:1.5rem">
-      <div class="sh" style="margin-bottom:.75rem">
-        <div class="sh-title" style="font-size:16px">🔔 Récurrentes en attente</div>
-        <button class="btn btn-ghost btn-sm" onclick="applyAllRec()">▶ Tout déclencher</button>
+    <!-- Récurrentes intégrées dans Saisie -->
+    <div class="card" style="margin-bottom:10px" id="saisie-rec-card">
+      <div class="sh" style="margin-bottom:10px">
+        <div>
+          <div class="card-title" style="margin-bottom:0">Récurrentes</div>
+          <div id="saisie-rec-status" style="font-size:12px;color:var(--text3);font-weight:600;margin-top:3px"></div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="btn btn-ghost btn-sm" onclick="openRecModal()">⚙</button>
+          <button class="btn btn-blue btn-sm" id="saisie-apply-btn" onclick="applyAllRec()" style="display:none">▶ Tout</button>
+        </div>
       </div>
       <div id="saisie-rec-list"></div>
     </div>
@@ -822,10 +931,43 @@ function renderDashboardRec() {
 
 function renderSaisieRec() {
   const pending = recurrings.filter(r=>isRecActive(r)&&!isApplied(r,curYear,curMonth));
-  const sec = document.getElementById('saisie-rec-section');
-  if (!pending.length) { sec.style.display='none'; return; }
-  sec.style.display = 'block';
-  document.getElementById('saisie-rec-list').innerHTML = pending.map(r=>recHTML(r,curYear,curMonth)).join('');
+  const done    = recurrings.filter(r=>isRecActive(r)&&isApplied(r,curYear,curMonth));
+  const statusEl = document.getElementById('saisie-rec-status');
+  const applyBtn = document.getElementById('saisie-apply-btn');
+  if (statusEl) statusEl.textContent = pending.length
+    ? `${pending.length} en attente · ${done.length} déclenchée(s)`
+    : recurrings.length ? `Tout déclenché ce mois ✓` : 'Aucune récurrente configurée';
+  if (applyBtn) applyBtn.style.display = pending.length ? 'block' : 'none';
+  const list = document.getElementById('saisie-rec-list');
+  if (!list) return;
+  if (!recurrings.length) {
+    list.innerHTML = `<div style="color:var(--text3);font-size:13px;padding:.5rem 0">
+      <button class="btn btn-ghost btn-sm" onclick="openRecModal()">+ Ajouter des récurrentes</button>
+    </div>`;
+    return;
+  }
+  // Show all active recurrings
+  const active = recurrings.filter(r=>isRecActive(r));
+  list.innerHTML = active.map(r=>recItemCompact(r,curYear,curMonth)).join('') +
+    (recurrings.filter(r=>!isRecActive(r)).length ? `<div style="font-size:11px;color:var(--text3);margin-top:6px;font-weight:600">${recurrings.filter(r=>!isRecActive(r)).length} hors période</div>` : '');
+}
+
+function recItemCompact(rec,y,m) {
+  const applied = isApplied(rec,y,m);
+  const colMap  = {income:'var(--green)',expense:'var(--red)',savings:'var(--blue)'};
+  const signMap = {income:'+',expense:'−',savings:'◎'};
+  return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border)">
+    <div style="width:4px;height:34px;border-radius:2px;background:${colMap[rec.type]};flex-shrink:0"></div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${rec.desc}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:1px">${FREQ_LABELS[rec.freq]}</div>
+    </div>
+    <div style="font-size:14px;font-weight:800;color:${colMap[rec.type]};flex-shrink:0">${signMap[rec.type]}${fmt(rec.amount)}</div>
+    ${applied
+      ? `<span style="font-size:11px;font-weight:700;color:var(--green);background:var(--green-bg);padding:3px 9px;border-radius:20px;flex-shrink:0">✓</span>`
+      : `<button onclick="applyRec(${rec.id},${y},${m})" style="font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;border:1.5px solid var(--blue);background:var(--blue-bg);color:var(--blue);cursor:pointer;font-family:'Nunito',sans-serif;flex-shrink:0;-webkit-tap-highlight-color:transparent">▶</button>`
+    }
+  </div>`;
 }
 
 /* ── MODAL RÉCURRENTES ── */
@@ -941,6 +1083,41 @@ function renderDashboard() {
   });
   rows.push(`<tr class="total-row"><td>Total</td><td class="tc-green">${fmt(tI)}</td><td class="tc-red">${fmt(tE)}</td><td class="tc-blue">${fmt(tS)}</td><td class="${tBal>=0?'pos':'neg'}">${fmt(tBal)}</td><td>${fmtPct(tRate)}</td></tr>`);
   document.getElementById('year-tbody').innerHTML = rows.join('');
+
+  // Mobile month cards
+  const mCards = document.getElementById('mobile-month-cards');
+  if (mCards) {
+    const isCY = dashYear === now.getFullYear();
+    const wd = md.filter(function(x){return x.income||x.expense||x.savings;});
+    if (!wd.length) {
+      mCards.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text3);font-size:13px">Aucune transaction en '+dashYear+'</div>';
+    } else {
+      mCards.innerHTML = wd.map(function(x){
+        var m=x.m,income=x.income,expense=x.expense,savings=x.savings,balance=x.balance;
+        var r = income>0?Math.round((savings/income)*100):0;
+        var isCur = isCY && m===now.getMonth();
+        var bColor = balance>=0?'var(--green)':'var(--red)';
+        var bdr = isCur?'var(--blue)':'var(--border)';
+        var extra = isCur?';box-shadow:0 0 0 3px var(--blue-bg)':'';
+        return '<div style="background:var(--surface);border:1.5px solid '+bdr+';border-radius:14px;padding:14px;margin-bottom:8px'+extra+'">'
+          +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
+          +'<span style="font-weight:800;color:'+(isCur?'var(--blue)':'var(--text)')+';font-size:15px">'+MONTHS[m]+(isCur?' ◀':'')+'</span>'
+          +'<span style="font-size:13px;font-weight:800;color:'+bColor+'">'+(balance>=0?'+':'')+fmt(balance)+'</span>'
+          +'</div>'
+          +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">'
+          +'<div><div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:3px">REVENUS</div><div style="font-size:13px;font-weight:800;color:var(--green)">'+fmt(income)+'</div></div>'
+          +'<div><div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:3px">DÉPENSES</div><div style="font-size:13px;font-weight:800;color:var(--red)">'+fmt(expense)+'</div></div>'
+          +'<div><div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:3px">ÉPARGNE</div><div style="font-size:13px;font-weight:800;color:var(--blue)">'+fmt(savings)+'</div></div>'
+          +'</div>'
+          +'<div style="margin-top:8px;height:4px;border-radius:3px;background:var(--surface3);overflow:hidden">'
+          +'<div style="height:100%;border-radius:3px;background:var(--blue);width:'+r+'%"></div>'
+          +'</div>'
+          +'<div style="font-size:10px;color:var(--text3);font-weight:600;margin-top:4px;text-align:right">Taux épargne '+r+'%</div>'
+          +'</div>';
+      }).join('');
+    }
+  }
+
   renderDashboardRec();
 }
 
