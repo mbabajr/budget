@@ -216,6 +216,8 @@ input::placeholder{color:var(--text3)}
 /* ── DESKTOP ── */
 @media(min-width:681px){
   .app{padding-top:max(2.5rem,env(safe-area-inset-top))}
+  .mobile-month-cards{display:none !important}
+  .year-table-card{display:block !important}
 }
 
 /* ══════════════════════════════
@@ -273,8 +275,8 @@ input::placeholder{color:var(--text3)}
   .mnav-btn{width:34px;height:34px;font-size:14px}
 
   /* Cacher le tableau sur mobile — remplacé par cards mois */
-  .year-table-card{display:none}
-  .mobile-month-cards{display:flex;flex-direction:column;gap:8px}
+  .year-table-card{display:none !important}
+  .mobile-month-cards{display:flex !important;flex-direction:column;gap:8px}
 
   /* Graphiques moins hauts */
   #annualBarChart{max-height:180px}
@@ -336,6 +338,11 @@ input::placeholder{color:var(--text3)}
   .modal-row-2{grid-template-columns:1fr}
   .modal-actions{flex-direction:column-reverse;gap:8px}
   .modal-actions .btn{width:100%;justify-content:center;padding:13px}
+
+  /* Rec modal form — single column on mobile */
+  .rec-form-row2,.rec-form-row3{grid-template-columns:1fr !important}
+  /* Modal overflow fix */
+  .modal-lg .modal-row-2{grid-template-columns:1fr !important}
 
   /* SH titles */
   .sh{margin-bottom:10px}
@@ -534,11 +541,11 @@ input::placeholder{color:var(--text3)}
         <button class="type-btn" id="rt-expense" onclick="setRecType('expense')">− Dépense</button>
         <button class="type-btn" id="rt-savings" onclick="setRecType('savings')">◎ Épargne</button>
       </div>
-      <div class="modal-row-2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div class="modal-row-2" class="rec-form-row2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
         <div><label class="flabel">Catégorie</label><select id="rf-cat"></select></div>
         <div><label class="flabel">Description</label><input type="text" id="rf-desc" placeholder="Ex: Loyer, Netflix…"></div>
       </div>
-      <div class="modal-row-2" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+      <div class="modal-row-2" class="rec-form-row3" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
         <div><label class="flabel">Montant €</label><input type="number" id="rf-amount" placeholder="0" min="0"></div>
         <div><label class="flabel">Fréquence</label>
           <select id="rf-freq">
