@@ -988,7 +988,7 @@ function addTx(){
   refreshSaisie();toast('Transaction ajoutée');
   sb.insertTx(tx,key).catch(()=>toast('Sauvegarde cloud échouée',false));
 }
-function deleteTx(id){const key=mkKey(curYear,curMonth);if(txCache[key])txCache[key]=txCache[key].filter(t=>t.id!==id);LS.saveTx(txCache);refreshSaisie();toast('Supprimée');sb.deleteTx(id).catch(()=>{})}
+async function deleteTx(id){const key=mkKey(curYear,curMonth);if(txCache[key])txCache[key]=txCache[key].filter(t=>t.id!==id);LS.saveTx(txCache);refreshSaisie();try{await sb.deleteTx(id);toast('Supprimée');}catch(e){toast('Supprimée (hors ligne)',true);}}
 
 function refreshSaisie(){
   document.getElementById('month-label').textContent=`${MONTHS[curMonth]} ${curYear}`;
@@ -1047,7 +1047,7 @@ function applyAllRec(){
   if(document.getElementById('rec-overlay').style.display==='flex')renderRecModalList();
   sb.upsertRec(recurrings).catch(()=>{});
 }
-function deleteRec(id){recurrings=recurrings.filter(r=>r.id!==id);LS.saveRec();renderDashboardRec();renderSaisieRec();renderRecModalList();toast('Récurrente supprimée');sb.upsertRec(recurrings).catch(()=>{})}
+async function deleteRec(id){recurrings=recurrings.filter(r=>r.id!==id);LS.saveRec();renderDashboardRec();renderSaisieRec();renderRecModalList();try{await sb.upsertRec(recurrings);toast('Récurrente supprimée');}catch(e){toast('Supprimée (hors ligne)',true);}}
 
 function recIconHTML(rec){const ic=catIcon(rec.cat,rec.type),bg=catBg(rec.cat,rec.type);return`<div class="rec-icon" style="background:${bg}">${ic}</div>`}
 
@@ -1203,7 +1203,7 @@ function saveGoal(){
   else goals.push({id:Date.now(),name,target,start:start||null,end:end||null,emoji});
   LS.saveGoals();closeGoalModal();renderObjectifs();toast(editGoalId?'Objectif mis à jour':'Objectif créé !');sb.upsertGoals(goals).catch(()=>{});
 }
-function deleteGoal(id){if(!confirm('Supprimer cet objectif ?'))return;goals=goals.filter(g=>g.id!==id);LS.saveGoals();renderObjectifs();toast('Objectif supprimé');sb.upsertGoals(goals).catch(()=>{})}
+async function deleteGoal(id){if(!confirm('Supprimer cet objectif ?'))return;goals=goals.filter(g=>g.id!==id);LS.saveGoals();renderObjectifs();try{await sb.upsertGoals(goals);toast('Objectif supprimé');}catch(e){toast('Supprimé (hors ligne)',true);}}
 
 function getGoalSavings(g){
   const result=[];if(!g.start)return result;
@@ -1276,12 +1276,25 @@ async function manualSync(){
   if(lbl)lbl.textContent='⟳';
   try{
     const[sbTx,sbGoals,sbRec]=await Promise.all([sb.getTx(),sb.getGoals(),sb.getRec()]);
-    txCache=sbTx;goals=sbGoals;recurrings=sbRec;
-    LS.saveTx(txCache);LS.saveGoals();LS.saveRec();
-    refreshSaisie();renderDashboard();
-    const v=document.querySelector('.view.active')?.id?.replace('view-','');
-    if(v==='objectifs')renderObjectifs();
-    toast('Synchronisé ✓');
+    const sbTxCount=Object.values(sbTx).flat().length;
+    const localTxCount=Object.values(txCache).flat().length;
+    // Si Supabase est vide mais qu'on a des données locales → on upload le local vers Supabase
+    if(sbTxCount===0 && localTxCount>0){
+      const allTxs=[];
+      for(const[mk,txs]of Object.entries(txCache))for(const tx of txs)allTxs.push(sb.insertTx(tx,mk));
+      await Promise.all(allTxs);
+      if(goals.length)await sb.upsertGoals(goals);
+      if(recurrings.length)await sb.upsertRec(recurrings);
+      toast('Données envoyées vers le cloud ✓');
+    } else {
+      // Supabase a des données → on les charge
+      txCache=sbTx;goals=sbGoals;recurrings=sbRec;
+      LS.saveTx(txCache);LS.saveGoals();LS.saveRec();
+      refreshSaisie();renderDashboard();
+      const v=document.querySelector('.view.active')?.id?.replace('view-','');
+      if(v==='objectifs')renderObjectifs();
+      toast('Synchronisé ✓');
+    }
   }catch(e){
     toast('Erreur de synchronisation',false);
   }finally{
@@ -1297,9 +1310,22 @@ async function init(){
   setSyncing(true,'Synchronisation…');
   try{
     const[sbTx,sbGoals,sbRec]=await Promise.all([sb.getTx(),sb.getGoals(),sb.getRec()]);
-    txCache=sbTx;goals=sbGoals;recurrings=sbRec;
-    LS.saveTx(txCache);LS.saveGoals();LS.saveRec();
-    refreshSaisie();renderDashboard();setSyncing(false);toast('Données synchronisées');
+    const sbTxCount=Object.values(sbTx).flat().length;
+    const localTxCount=Object.values(txCache).flat().length;
+    if(sbTxCount===0 && localTxCount>0){
+      // Supabase vide mais données locales → on garde le local, on upload
+      const allTxs=[];
+      for(const[mk,txs]of Object.entries(txCache))for(const tx of txs)allTxs.push(sb.insertTx(tx,mk));
+      await Promise.all(allTxs);
+      if(goals.length)await sb.upsertGoals(goals);
+      if(recurrings.length)await sb.upsertRec(recurrings);
+    } else if(sbTxCount>0){
+      // Supabase a des données → on les charge
+      txCache=sbTx;goals=sbGoals;recurrings=sbRec;
+      LS.saveTx(txCache);LS.saveGoals();LS.saveRec();
+      refreshSaisie();renderDashboard();
+    }
+    setSyncing(false);toast('Données synchronisées');
   }catch(e){setSyncing(false);toast('Hors ligne — données locales',false)}
 }
 
